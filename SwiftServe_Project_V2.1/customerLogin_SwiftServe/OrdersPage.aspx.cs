@@ -15,7 +15,8 @@ namespace OrdersPage
         {
             if (! IsPostBack)
             {
-                BindGridView();
+                BindOrderGridView();
+                BindMenuGridView();
             }
         }
 
@@ -24,16 +25,48 @@ namespace OrdersPage
             return System.Configuration.ConfigurationManager.ConnectionStrings["swiftServeDB"].ConnectionString;
         }
 
-        #region Bind GridView
-        private void BindGridView()
+        #region Bind Menu GridView
+        private void BindMenuGridView()
         {
             DataTable dt = new DataTable();
             SqlConnection connection = new SqlConnection(GetConnectionString());
             try
             {
                 connection.Open();
-                string sqlStatement = "SELECT (OrderID, RestaurantName, Creation_Time, Total, Status) FROM Order, Order_Item, Menu_Items WHERE Order.CentennialEmail = '"
-                    + Session["username"] + "' AND Order.OrderID = Order_Item.OrderID AND Order_Item.Menu_Item_Name = Menu_Items.Name GROUP BY Order.OrderID";
+                string sqlStatement = "SELECT RestaurantName, Name, Price FROM Menu_Items WHERE Visible = TRUE and InStock = TRUE"; // AND RestaurantName = '" + Request["restaurantName"] + "'"
+                SqlCommand cmd = new SqlCommand(sqlStatement, connection);
+                SqlDataAdapter sqlData = new SqlDataAdapter(cmd);
+
+                sqlData.Fill(dt);
+                if (dt.Rows.Count > 0)
+                {
+                    MenuGridView.DataSource = dt;
+                    MenuGridView.DataBind();
+                }
+            }
+            catch (System.Data.SqlClient.SqlException ex)
+            {
+                string msg = "Fetch Error: ";
+                msg += ex.Message;
+                throw new Exception(msg);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+        #endregion
+
+        #region Bind Order GridView
+        private void BindOrderGridView()
+        {
+            DataTable dt = new DataTable();
+            SqlConnection connection = new SqlConnection(GetConnectionString());
+            try
+            {
+                connection.Open();
+                string sqlStatement = "SELECT (OrderID, RestaurantName, Creation_Time, SUM(Subtotal) AS Total, Status) FROM Orders, Order_Items, Menu_Items WHERE Orders.CentennialEmail = '"
+                    + Session["username"] + "' AND Orders.OrderID = Order_Items.OrderID AND Order_Items.Menu_Item_Name = Menu_Items.Name GROUP BY Orders.OrderID";
                 SqlCommand cmd = new SqlCommand(sqlStatement, connection);
                 SqlDataAdapter sqlData = new SqlDataAdapter(cmd);
 
@@ -66,7 +99,7 @@ namespace OrdersPage
             try
             {
                 connection.Open();
-                string sqlStatement = "SELECT (Menu_Item_Name, Quantity, Price) FROM Order_Item WHERE OrderID = "
+                string sqlStatement = "SELECT (Menu_Item_Name, Quantity, Price, Subtotal) FROM Order_Items WHERE OrderID = "
                     + orderID + ")";
                 SqlCommand cmd = new SqlCommand(sqlStatement, connection);
                 SqlDataAdapter sqlData = new SqlDataAdapter(cmd);

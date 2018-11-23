@@ -30,7 +30,7 @@ if a restaurant changes its prices, it doesn't retroactively change past bills, 
 about queries
 all these queries are structured to be pasted into the sqlStatement declaration for a gridView
 e.g.
-string sqlStatement = "SELECT (OrderID, Creation_Time, Total, Status) FROM Order WHERE CentennialEmail = " + Session["username"];
+string sqlStatement = "SELECT (OrderID, Creation_Time, Total, Status) FROM Orders WHERE CentennialEmail = " + Session["username"];
 
 the rest of most gridviews can be exactly the same as the one I wrote earlier (OrdersPage.cs), unless you need to add update/create buttons, etc.
 for those read here: 
@@ -44,11 +44,11 @@ https://www.aspsnippets.com/Articles/ASPNet-GridView-DetailsView-Master-Detail-E
 ---
 
 Getting all old orders for a user:
-"SELECT (OrderID, Creation_Time, Total, Status, RestaurantName) FROM Order, Order_Item, Menu_Items WHERE Order.CentennialEmail = '" + Session["username"] + "' AND Order.OrderID = Order_Item.OrderID AND Order_Item.Menu_Item_Name = Menu_Items.Name GROUP BY Order.OrderID"
+"SELECT (OrderID, Creation_Time, Total, Status, RestaurantName) FROM Orders, Order_Items, Menu_Items WHERE Orders.CentennialEmail = '" + Session["username"] + "' AND Orders.OrderID = Order_Items.OrderID AND Order_Items.Menu_Item_Name = Menu_Items.Name GROUP BY Orders.OrderID"
 the GROUP BY is crucial because there's several order_items per order, but they all reference the same restaurant's menu and we only need one copy of the restaurant's name
 
 Then use a DetailsView to show the menu items ordered on selected orders... bluh, there's no easy option for this, is there?
-"SELECT (Menu_Item_Name, Quantity, Price) FROM Order_Item WHERE OrderID IN (SELECT OrderID FROM Order WHERE CentennialEmail = '"
+"SELECT (Menu_Item_Name, Quantity, Price) FROM Order_Items WHERE OrderID IN (SELECT OrderID FROM Orders WHERE CentennialEmail = '"
                     + Session["username"] + "')"
 that's a naive list, we'll be replacing the subquery with the OrderID of the row in the parent GridView
 
@@ -56,16 +56,20 @@ that's a naive list, we'll be replacing the subquery with the OrderID of the row
 
 Creating a new order:
 
-have to pre-calculate total from selected food item prices and quantities
-they'll be passed to the page in Request... somehow.
+selected food items will be passed to the page in Request... somehow.
 Probably just the item names, restaurant name, and quantities
 re-request to get the prices without tampering with the request variables
 then run up the total
 how to organize it so that the list of request parameters is iterable and can run through a loop, that's the tricky part
 can you send a DataTable or something?  I don't know
 
-"INSERT INTO ORDER (CentennialEmail, CreationTime, DelayTime, Total, Status) VALUES ('" + Session["username"] +"', DateTime.NOW, 0, " + total + ", 'Created')"
-"INSERT INTO Order_Item (Menu_Item, Name, OrderID, Price, Qty) VALUES ('" + Menu_Item_Name + "', " + OrderID + ", " + Price + ", " + Quantity + ")"
+DateTime now = DateTime.NOW; // C#
+"INSERT INTO Orders (CentennialEmail, CreationTime, DelayTime, Status) VALUES ('" + Session["username"] +"', '" + now + "', 0, 'Created')"
+
+"SELECT OrderID FROM Orders WHERE CentennialEmail = '" + Session["username"] + "' AND CreationTime = '" + now + "'"
+parse that query result for value to assign C# variable orderId
+
+"INSERT INTO Order_Items (Menu_Item, Name, OrderID, Price, Qty) VALUES ('" + Menu_Item_Name + "', " + orderId + ", " + Price + ", " + Quantity + ")"
 
 ---
 
@@ -82,5 +86,5 @@ if the user agrees, then use the create new order (and order_items) queries.
 ---
 
 updates only really affect status, the rest isn't related to orders
-UPDATE Order SET Status = '" + newStatus + "' WHERE OrderID = " + myOrderID
+UPDATE Orders SET Status = '" + newStatus + "' WHERE OrderID = " + myOrderID
 this is again outside our current deliverables for this iteration

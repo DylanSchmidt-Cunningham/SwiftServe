@@ -169,36 +169,36 @@ CREATE TABLE [dbo].[Menu_Items](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Order]    Script Date: 2018-11-18 2:16:41 AM ******/
+/****** Object:  Table [dbo].[Orders]    Script Date: 2018-11-18 2:16:41 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[Order](
+CREATE TABLE [dbo].[Orders](
 	[OrderID] [int] IDENTITY(1,1) NOT NULL,
 	[CentennialEmail] [nvarchar](50) NOT NULL,
 	[CreationTime] [datetime] NOT NULL,
 	[DelayTime] [int] NOT NULL,
-	[Total] [smallmoney] NOT NULL,
 	[Status] [nvarchar](50) NOT NULL,
- CONSTRAINT [PK_Order] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED 
 (
 	[OrderID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Order_Item]    Script Date: 2018-11-18 2:16:41 AM ******/
+/****** Object:  Table [dbo].[Order_Items]    Script Date: 2018-11-18 2:16:41 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[Order_Item](
+CREATE TABLE [dbo].[Order_Items](
 	[Menu_Item_Name] [varchar](50) NOT NULL,
 	[OrderID] [int] NOT NULL,
 	[Price] [smallmoney] NOT NULL,
 	[Quantity] [int] NOT NULL,
- CONSTRAINT [PK_Order_Item] PRIMARY KEY CLUSTERED 
+	[Subtotal] AS [Quantity] * [Price],
+ CONSTRAINT [PK_Order_Items] PRIMARY KEY CLUSTERED 
 (
 	[Menu_Item_Name] ASC,
 	[OrderID] ASC
@@ -223,7 +223,7 @@ CREATE TABLE [dbo].[Restaurant](
 ) ON [PRIMARY]
 
 GO
-ALTER TABLE [dbo].[Order] ADD  CONSTRAINT [DF_Order_DelayTime]  DEFAULT ((0)) FOR [DelayTime]
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_DelayTime]  DEFAULT ((0)) FOR [DelayTime]
 GO
 ALTER TABLE [dbo].[CustomerAccount]  WITH CHECK ADD  CONSTRAINT [FK_customerLogin_customerAccount] FOREIGN KEY([CentennialEmail])
 REFERENCES [dbo].[CustomerLogin] ([Username])
@@ -240,20 +240,20 @@ REFERENCES [dbo].[Restaurant] ([Name])
 GO
 ALTER TABLE [dbo].[Menu_Items] CHECK CONSTRAINT [FK_Menu_Restaurant]
 GO
-ALTER TABLE [dbo].[Order]  WITH CHECK ADD  CONSTRAINT [FK_Order_CustomerAccount] FOREIGN KEY([CentennialEmail])
+ALTER TABLE [dbo].[Orders]  WITH CHECK ADD  CONSTRAINT [FK_Orders_CustomerAccount] FOREIGN KEY([CentennialEmail])
 REFERENCES [dbo].[CustomerAccount] ([CentennialEmail])
 GO
-ALTER TABLE [dbo].[Order] CHECK CONSTRAINT [FK_Order_CustomerAccount]
+ALTER TABLE [dbo].[Orders] CHECK CONSTRAINT [FK_Orders_CustomerAccount]
 GO
-ALTER TABLE [dbo].[Order_Item]  WITH CHECK ADD  CONSTRAINT [FK_Order_Item_Menu_Items] FOREIGN KEY([Menu_Item_Name])
+ALTER TABLE [dbo].[Order_Items]  WITH CHECK ADD  CONSTRAINT [FK_Order_Items_Menu_Items] FOREIGN KEY([Menu_Item_Name])
 REFERENCES [dbo].[Menu_Items] ([Name])
 GO
-ALTER TABLE [dbo].[Order_Item] CHECK CONSTRAINT [FK_Order_Item_Menu_Items]
+ALTER TABLE [dbo].[Order_Items] CHECK CONSTRAINT [FK_Order_Items_Menu_Items]
 GO
-ALTER TABLE [dbo].[Order_Item]  WITH CHECK ADD  CONSTRAINT [FK_Order_Item_Order] FOREIGN KEY([OrderID])
-REFERENCES [dbo].[Order] ([OrderID])
+ALTER TABLE [dbo].[Order_Items]  WITH CHECK ADD  CONSTRAINT [FK_Order_Items_Orders] FOREIGN KEY([OrderID])
+REFERENCES [dbo].[Orders] ([OrderID])
 GO
-ALTER TABLE [dbo].[Order_Item] CHECK CONSTRAINT [FK_Order_Item_Order]
+ALTER TABLE [dbo].[Order_Items] CHECK CONSTRAINT [FK_Order_Items_Orders]
 GO
 ALTER TABLE [dbo].[Restaurant]  WITH CHECK ADD  CONSTRAINT [CK_Rest_PhoneNo] CHECK  (([PhoneNo] like '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'))
 GO
