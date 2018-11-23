@@ -11,7 +11,7 @@ namespace OrdersPage {
     
     
     public partial class OrderConfirm {
-        
+        //
         /// <summary>
         /// form1 control.
         /// </summary>

@@ -5,11 +5,11 @@ CREATE DATABASE [SwiftServe]
  CONTAINMENT = NONE
  ON  PRIMARY 
  /* Uncomment the address string that works for your environment: lab computers are ..\MSSQL13.MSSQLSERVER2016\.., Dylan's computer is just ..\MSSQL13.MSSQLSERVER\.. */
-/*( NAME = N'SwiftServe', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\DATA\SwiftServe.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )*/
-( NAME = N'SwiftServe', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER2016\MSSQL\DATA\SwiftServe.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+( NAME = N'SwiftServe', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\DATA\SwiftServe.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+/*( NAME = N'SwiftServe', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER2016\MSSQL\DATA\SwiftServe.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )*/
  LOG ON 
-/*( NAME = N'SwiftServe_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\DATA\SwiftServe_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )*/
-( NAME = N'SwiftServe_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER2016\MSSQL\DATA\SwiftServe_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+( NAME = N'SwiftServe_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\DATA\SwiftServe_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+/*( NAME = N'SwiftServe_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER2016\MSSQL\DATA\SwiftServe_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )*/
 GO
 ALTER DATABASE [SwiftServe] SET COMPATIBILITY_LEVEL = 130
 GO
@@ -175,10 +175,10 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[Order](
-	[OrderID] [int] NOT NULL,
+	[OrderID] [int] IDENTITY(1,1) NOT NULL,
 	[CentennialEmail] [nvarchar](50) NOT NULL,
 	[CreationTime] [datetime] NOT NULL,
-	[DelayTime] [datetimeoffset](7) NOT NULL,
+	[DelayTime] [int] NOT NULL,
 	[Total] [smallmoney] NOT NULL,
 	[Status] [nvarchar](50) NOT NULL,
  CONSTRAINT [PK_Order] PRIMARY KEY CLUSTERED 
@@ -222,6 +222,8 @@ CREATE TABLE [dbo].[Restaurant](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
+GO
+ALTER TABLE [dbo].[Order] ADD  CONSTRAINT [DF_Order_DelayTime]  DEFAULT ((0)) FOR [DelayTime]
 GO
 ALTER TABLE [dbo].[CustomerAccount]  WITH CHECK ADD  CONSTRAINT [FK_customerLogin_customerAccount] FOREIGN KEY([CentennialEmail])
 REFERENCES [dbo].[CustomerLogin] ([Username])

@@ -9,84 +9,45 @@
 <body>
     <form id="form1" runat="server">
         <div>
-            <table style="width: 100%;">
-                <tr>
-                    <th colspan="2">Menu</th>
-                </tr>
-                <%--just random food items. Have to collect food items from database?--%>
-                <tr>
-                    <td>Pizza</td>
-                    <td>
-                        <asp:CheckBox ID="CheckBox1" runat="server" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Poutine</td>
-                    <td>
-                        <asp:CheckBox ID="CheckBox2" runat="server" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Chicken Wings</td>
-                    <td>
-                        <asp:CheckBox ID="CheckBox3" runat="server" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Fries</td>
-                    <td>
-                        <asp:CheckBox ID="CheckBox4" runat="server" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Smoothie</td>
-                    <td>
-                        <asp:CheckBox ID="CheckBox5" runat="server" />
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <asp:Button ID="BtnConfirmOrder" runat="server" Text="Confirm Order" OnClick="BtnConfirmOrder_Click"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">&nbsp;</td>
-                </tr>
-                <tr>
-                    <th colspan="2">Order History</th>
-                </tr>
-                <tr>
-                    <td colspan="2">&nbsp;</td>
-                </tr>
-                <tr>
-                    <td colspan="2">&nbsp;</td>
-                </tr>
-                <tr>
-                    <td colspan="2">&nbsp;</td>
-                </tr>
-                <tr>
-                    <td colspan="2">&nbsp;</td>
-                </tr>
-                <tr>
-                    <td colspan="2">&nbsp;</td>
-                </tr>
-                <tr>
-                    <td colspan="2">&nbsp;</td>
-                </tr>
-                <tr>
-                    <td colspan="2">&nbsp;</td>
-                </tr>
-                <tr>
-                    <td colspan="2">&nbsp;</td>
-                </tr>
-                <tr>
-                    <td colspan="2">&nbsp;</td>
-                </tr>
-                <tr>
-                    <td colspan="2">&nbsp;</td>
-                </tr>
-            </table>
+            <asp:GridView id="OrderGridView" runat="server"
+                      AutoGenerateColumns="false"
+                      ShowFooter="true">
+            <Columns>
+                <asp:BoundField DataField="OrderID"
+                      HeaderText="Order ID" ReadOnly="true"/>
+                <asp:BoundField DataField="RestaurantName"
+                      HeaderText="Restaurant" ReadOnly="true"/>
+                <asp:BoundField DataField="CreationTime"
+                      HeaderText="Date & Time"/>
+                <asp:BoundField DataField="Total"
+                      HeaderText="Total Cost"/>
+                <asp:BoundField DataField="Status"
+                      HeaderText="Status"/>
+                <asp:ButtonField Text="Select" CommandName="Select" />
+            </Columns>
+
+            </asp:GridView>
+            <br />
+            <u>Selected Order:</u>
+            <br />
+            <br />
+            <!-- change of plans, I said DetailsView a lot, but it looks like this needed to be a GridView b/c it has more than one entry -->
+            <asp:GridView ID="OrderItemDetailsView" runat="server" AutoGenerateRows="false">
+                <Columns>
+                    <asp:BoundField DataField="Menu_Item_Name" HeaderText="Name" HeaderStyle-Font-Bold="true" />
+                    <asp:BoundField DataField="Quantity" HeaderText="Quantity" HeaderStyle-Font-Bold="true" />
+                    <asp:BoundField DataField="Price" HeaderText="Price" HeaderStyle-Font-Bold="true" />
+                </Columns>
+            </asp:GridView>
         </div>
+        <br />
+        <br />
+        <br />
+        <div>
+            Order History
+            <!-- We'll need another GridView in here, look at the first one to see how it's done -->
+        </div>
+        
 
     </form>
 </body>

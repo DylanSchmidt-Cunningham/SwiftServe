@@ -1,0 +1,86 @@
+SQL Queries for Order stuff
+
+What are our order statuses?
+I haven't stopped to look it up
+
+my thoughts were:
+
+           (only by restaurant)
+    +--------------------------------+
+    |                                |
+    |                +-->PLACING-->PLACED-->READY
+    V       (2:00)   |     ^
+CANCELLED<--CREATED--|     |
+               ^     |     |
+             start   +-->ON HOLD
+                        (user-requested delay)
+
+right now, only Created status matters because that will be the status when we insert new orders
+these will matter more when we start tracking order status
+
+oh, an aside about prices
+there's duplicate columns in both menu_items and order_items for price
+this will produce inconsistencies if the menu_items table is updated
+this is deliberate
+we want this
+if a restaurant changes its prices, it doesn't retroactively change past bills, yeah?
+
+---
+
+about queries
+all these queries are structured to be pasted into the sqlStatement declaration for a gridView
+e.g.
+string sqlStatement = "SELECT (OrderID, Creation_Time, Total, Status) FROM Order WHERE CentennialEmail = " + Session["username"];
+
+the rest of most gridviews can be exactly the same as the one I wrote earlier (OrdersPage.cs), unless you need to add update/create buttons, etc.
+for those read here: 
+http://geekswithblogs.net/dotNETvinz/archive/2009/02/22/gridview-insert-edit-update-and-delete--the-ado.net-way.aspx
+http://geekswithblogs.net/dotNETvinz/archive/2009/06/10/adding-rows-in-gridview-with-edit-update-and-delete-functionality.aspx
+oh, and you won't need the selection buttons if you don't need a DetailsView, obviously
+
+if something goes horribly wrong with the details view, I was reading this for reference:
+https://www.aspsnippets.com/Articles/ASPNet-GridView-DetailsView-Master-Detail-Example-Display-selected-GridView-Row-in-DetailsView-in-ASPNet.aspx
+
+---
+
+Getting all old orders for a user:
+"SELECT (OrderID, Creation_Time, Total, Status, RestaurantName) FROM Order, Order_Item, Menu_Items WHERE Order.CentennialEmail = '" + Session["username"] + "' AND Order.OrderID = Order_Item.OrderID AND Order_Item.Menu_Item_Name = Menu_Items.Name GROUP BY Order.OrderID"
+the GROUP BY is crucial because there's several order_items per order, but they all reference the same restaurant's menu and we only need one copy of the restaurant's name
+
+Then use a DetailsView to show the menu items ordered on selected orders... bluh, there's no easy option for this, is there?
+"SELECT (Menu_Item_Name, Quantity, Price) FROM Order_Item WHERE OrderID IN (SELECT OrderID FROM Order WHERE CentennialEmail = '"
+                    + Session["username"] + "')"
+that's a naive list, we'll be replacing the subquery with the OrderID of the row in the parent GridView
+
+---
+
+Creating a new order:
+
+have to pre-calculate total from selected food item prices and quantities
+they'll be passed to the page in Request... somehow.
+Probably just the item names, restaurant name, and quantities
+re-request to get the prices without tampering with the request variables
+then run up the total
+how to organize it so that the list of request parameters is iterable and can run through a loop, that's the tricky part
+can you send a DataTable or something?  I don't know
+
+"INSERT INTO ORDER (CentennialEmail, CreationTime, DelayTime, Total, Status) VALUES ('" + Session["username"] +"', DateTime.NOW, 0, " + total + ", 'Created')"
+"INSERT INTO Order_Item (Menu_Item, Name, OrderID, Price, Qty) VALUES ('" + Menu_Item_Name + "', " + OrderID + ", " + Price + ", " + Quantity + ")"
+
+---
+
+Displaying menu items to choose from
+"SELECT (Name, RestaurantName, Price) FROM Menu_Items WHERE Visible = TRUE AND InStock = TRUE"
+we'll need to add 
+	" AND Restaurant_Name = '" + Request["restaurantName"] + "'"
+later when that feature's supported... for now it lists for all restaurants, though with my test data that's just Timmies
+this then needs columns for entering quantity (not read-only, unlike the others) and pull all quantities > 0 for generating the order
+don't actually generate the order yet, just pass the info over to the confirm page
+let the confirm page calculate the total cost and make a dummy order (note that OrderID is auto-increment, so no need to provide a value for it)
+if the user agrees, then use the create new order (and order_items) queries.
+
+---
+
+updates only really affect status, the rest isn't related to orders
+UPDATE Order SET Status = '" + newStatus + "' WHERE OrderID = " + myOrderID
+this is again outside our current deliverables for this iteration
