@@ -33,7 +33,7 @@ namespace OrdersPage
             try
             {
                 connection.Open();
-                string sqlStatement = "SELECT RestaurantName, Name, Price FROM Menu_Items WHERE Visible = TRUE and InStock = TRUE"; // AND RestaurantName = '" + Request["restaurantName"] + "'"
+                string sqlStatement = "SELECT RestaurantName, Name, Price FROM Menu_Items WHERE Visible = TRUE and InStock = TRUE"; // AND RestaurantName = '" + whatever variable holds selected item from the radio buttons + "'"
                 SqlCommand cmd = new SqlCommand(sqlStatement, connection);
                 SqlDataAdapter sqlData = new SqlDataAdapter(cmd);
 
@@ -65,8 +65,9 @@ namespace OrdersPage
             try
             {
                 connection.Open();
-                string sqlStatement = "SELECT (OrderID, RestaurantName, Creation_Time, SUM(Subtotal) AS Total, Status) FROM Orders, Order_Items, Menu_Items WHERE Orders.CentennialEmail = '"
-                    + Session["username"] + "' AND Orders.OrderID = Order_Items.OrderID AND Order_Items.Menu_Item_Name = Menu_Items.Name GROUP BY Orders.OrderID";
+                string sqlStatement = "SELECT Orders.OrderID, RestaurantName, MIN(CreationTime) AS CreationTime, 1.13 * SUM(Subtotal) AS Total, MIN(Orders.Status) AS Status "
+                    + "FROM Orders, Order_Items, Menu_Items WHERE Orders.CentennialEmail = '" + Session["username"] 
+                    + "' AND Orders.OrderID = Order_Items.OrderID AND Order_Items.Menu_Item_Name = Menu_Items.Name GROUP BY Orders.OrderID, Menu_Items.RestaurantName";
                 SqlCommand cmd = new SqlCommand(sqlStatement, connection);
                 SqlDataAdapter sqlData = new SqlDataAdapter(cmd);
 
@@ -99,7 +100,7 @@ namespace OrdersPage
             try
             {
                 connection.Open();
-                string sqlStatement = "SELECT (Menu_Item_Name, Quantity, Price, Subtotal) FROM Order_Items WHERE OrderID = "
+                string sqlStatement = "SELECT Menu_Item_Name, Quantity, Price, Subtotal FROM Order_Items WHERE OrderID = "
                     + orderID + ")";
                 SqlCommand cmd = new SqlCommand(sqlStatement, connection);
                 SqlDataAdapter sqlData = new SqlDataAdapter(cmd);
