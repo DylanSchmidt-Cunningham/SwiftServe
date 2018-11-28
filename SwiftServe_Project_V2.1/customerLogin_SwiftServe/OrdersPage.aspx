@@ -11,12 +11,12 @@
         <div>
             Restaurant Selection:
             <br />
-            <asp:RadioButton runat="server" GroupName="Restaurant" Text="Epic Burger"></asp:RadioButton>
-            <asp:RadioButton runat="server" GroupName="Restaurant" Text="Main Cafeteria"></asp:RadioButton>
-            <asp:RadioButton runat="server" GroupName="Restaurant" Text="Pizza Pizza"></asp:RadioButton>
-            <asp:RadioButton runat="server" GroupName="Restaurant" Text="Smoke's Poutinerie"></asp:RadioButton>
-            <asp:RadioButton runat="server" GroupName="Restaurant" Text="Subway"></asp:RadioButton>
-            <asp:RadioButton runat="server" GroupName="Restaurant" Text="Tim Horton's"></asp:RadioButton>
+            <asp:RadioButton runat="server" GroupName="Restaurant" ID="RB_EpicBurger" Text="Epic Burger"></asp:RadioButton>
+            <asp:RadioButton runat="server" GroupName="Restaurant" ID="RB_Cafe" Text="Main Cafeteria"></asp:RadioButton>
+            <asp:RadioButton runat="server" GroupName="Restaurant" ID="RB_PizzaPizza" Text="Pizza Pizza"></asp:RadioButton>
+            <asp:RadioButton runat="server" GroupName="Restaurant" ID="RB_Poutinerie" Text="Smoke's Poutinerie"></asp:RadioButton>
+            <asp:RadioButton runat="server" GroupName="Restaurant" ID="RB_Subway" Text="Subway"></asp:RadioButton>
+            <asp:RadioButton runat="server" GroupName="Restaurant" ID="RB_Timmies" Text="Tim Horton's"></asp:RadioButton>
         </div>
         <br />
         <br />
@@ -79,6 +79,8 @@
             </Columns>
             </asp:GridView>
         </div>
+        <br />
+        <asp:Button ID="PlaceOrder" runat="server" OnClientClick="OnOrderButtonClicked" Text="Place Order" />
         <br />
         <br />
         <br />

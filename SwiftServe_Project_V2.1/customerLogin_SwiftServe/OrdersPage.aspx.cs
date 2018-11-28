@@ -13,10 +13,10 @@ namespace OrdersPage
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (! IsPostBack)
+            if (!IsPostBack)
             {
                 BindOrderGridView();
-                BindMenuGridView();
+                BindMenuGridView("Cafe");
             }
         }
 
@@ -26,14 +26,14 @@ namespace OrdersPage
         }
 
         #region Bind Menu GridView
-        private void BindMenuGridView()
+        private void BindMenuGridView(String restaurant)
         {
             DataTable dt = new DataTable();
             SqlConnection connection = new SqlConnection(GetConnectionString());
             try
             {
                 connection.Open();
-                string sqlStatement = "SELECT RestaurantName, Name, Price FROM Menu_Items WHERE Visible = TRUE and InStock = TRUE"; // AND RestaurantName = '" + whatever variable holds selected item from the radio buttons + "'"
+                string sqlStatement = "SELECT RestaurantName, Name, Price FROM Menu_Items WHERE Visible = TRUE and InStock = TRUE AND RestaurantName = '" + restaurant + "'";
                 SqlCommand cmd = new SqlCommand(sqlStatement, connection);
                 SqlDataAdapter sqlData = new SqlDataAdapter(cmd);
 
@@ -66,7 +66,7 @@ namespace OrdersPage
             {
                 connection.Open();
                 string sqlStatement = "SELECT Orders.OrderID, RestaurantName, MIN(CreationTime) AS CreationTime, 1.13 * SUM(Subtotal) AS Total, MIN(Orders.Status) AS Status "
-                    + "FROM Orders, Order_Items, Menu_Items WHERE Orders.CentennialEmail = '" + Session["username"] 
+                    + "FROM Orders, Order_Items, Menu_Items WHERE Orders.CentennialEmail = '" + Session["username"]
                     + "' AND Orders.OrderID = Order_Items.OrderID AND Order_Items.Menu_Item_Name = Menu_Items.Name GROUP BY Orders.OrderID, Menu_Items.RestaurantName";
                 SqlCommand cmd = new SqlCommand(sqlStatement, connection);
                 SqlDataAdapter sqlData = new SqlDataAdapter(cmd);
@@ -127,6 +127,62 @@ namespace OrdersPage
         protected void BtnConfirmOrder_Click(object sender, EventArgs e)
         {
             Response.Redirect("OrderConfirm.aspx");
+        }
+
+        protected void RadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            string restaurant;
+
+            if (RB_EpicBurger.Checked == true)
+            {
+                restaurant = "Epic Burger";
+            }
+            else if (RB_Cafe.Checked == true)
+            {
+                restaurant = "Main Cafeteria";
+            }
+            else if (RB_PizzaPizza.Checked == true)
+            {
+                restaurant = "Pizza Pizza";
+            }
+            else if (RB_Poutinerie.Checked == true)
+            {
+                restaurant = "Smoke's Poutinerie";
+            }
+            else if (RB_Subway.Checked == true)
+            {
+                restaurant = "Subway";
+            }
+            else if (RB_Timmies.Checked == true)
+            {
+                restaurant = "Tim Horton's";
+            }
+            else
+            {
+                restaurant = "Main Cafeteria";
+            }
+
+            // update the menu
+            BindMenuGridView(restaurant);
+        }
+
+        protected void OnOrderButtonClicked(Object sender, EventArgs e)
+        {
+            string parameters = ""; // for the request URL
+
+            foreach (GridViewRow row in MenuGridView.Rows)
+            {
+                // find the selection from the quantity drop-down list
+                int index = ((DropDownList)row.FindControl("QtyList")).SelectedIndex;
+
+                // we want all the items with non-zero quantities
+                if (Items[index].Value > 0)
+                {
+                    parameters += row; // TODO grab information from row cells and generate HTML request parameters for generating order in OrderConfirm.aspx
+                }
+            }
+
+            //TODO redirect to get the OrderConfirm page, passing along the parameters for the order
         }
     }
 }

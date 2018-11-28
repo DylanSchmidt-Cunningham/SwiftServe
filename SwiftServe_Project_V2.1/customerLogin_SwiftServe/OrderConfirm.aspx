@@ -17,6 +17,7 @@
 
 <body>
     <form id="form1" runat="server">
+        <!-- this table is a dummy; it's pretty and all, but it has to be replaced -->
         <div>
             <table style="width: 100%;">
                 <tbody class="auto-style1">
@@ -97,6 +98,18 @@
                 </tr>
             </table>
         </div>
+        <!-- everything above must go -->
+        <div>
+            <asp:GridView ID="GridView1" runat="server">
+            </asp:GridView>
+            <br />
+            <asp:GridView ID="GridView2" runat="server">
+            </asp:GridView>
+        </div>
+        <p>
+            <asp:Button ID="Btn_Cancel" runat="server" Text="Cancel" />
+            <asp:Button ID="Btn_Confirm" runat="server" Text="Confirm Order" />
+        </p>
     </form>
 </body>
 </html>
