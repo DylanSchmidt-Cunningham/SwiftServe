@@ -179,6 +179,7 @@ namespace OrdersPage
         protected void OnOrderButtonClicked(Object sender, EventArgs e)
         {
             string parameters = ""; // for the request URL
+            int paramIndex = 1;
 
             foreach (GridViewRow row in MenuGridView.Rows)
             {
@@ -188,11 +189,27 @@ namespace OrdersPage
                 // we want all the items with non-zero quantities
                 if (Items[index].Value > 0)
                 {
-                    parameters += row; // TODO grab information from row cells and generate HTML request parameters for generating order in OrderConfirm.aspx
+                    // &food1=fish&quantity1=1&food2=chips&quantity2=1
+                    parameters += "&food" + paramIndex + "=" + row.Cells[1].Text + "&price" + paramIndex + "=" + row.Cells[2].Text;
+                    paramIndex++;
                 }
             }
 
-            //TODO redirect to get the OrderConfirm page, passing along the parameters for the order
+            // do we have any items to purchase at all?
+            if(parameters.Length > 0)
+            {
+                // first parameter in the list is restaurant name, followed by our list of ingredient-quantity pairs
+                parameters = "?restaurant=" + MenuGridView.Rows[0].Cells[0].Text + parameters;
+                string request = "OrderConfirm.aspx" + parameters;
+                // go to order confirm page
+                Response.Redirect(request);
+            }
+            else
+            {
+                // TODO hey front-end people, do we want an error message if there's nothing in the order, or just do nothing?
+                // TODO add empty text area thingy to put error message in
+                string err = "No menu items selected in order.  Please select quantities to order from the drop-down lists.";
+            }
         }
     }
 }
