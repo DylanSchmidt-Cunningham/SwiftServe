@@ -98,6 +98,12 @@
                       HeaderText="Restaurant" ReadOnly="true"/>
                 <asp:BoundField DataField="CreationTime"
                       HeaderText="Date & Time"/>
+                <asp:BoundField DataField="Subtotal"
+                      HeaderText="Subtotal"/>
+                <asp:BoundField DataField="Tax"
+                      HeaderText="Tax"/>
+                <asp:BoundField DataField="ServiceFee"
+                      HeaderText="Service Fee"/>
                 <asp:BoundField DataField="Total"
                       HeaderText="Total Cost"/>
                 <asp:BoundField DataField="Status"

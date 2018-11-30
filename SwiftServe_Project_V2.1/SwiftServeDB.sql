@@ -180,6 +180,9 @@ CREATE TABLE [dbo].[Orders](
 	[CreationTime] [datetime] NOT NULL,
 	[DelayTime] [int] NOT NULL,
 	[Status] [nvarchar](50) NOT NULL,
+	[Semitotal] [smallmoney] NOT NULL,
+	[Taxes] [smallmoney] NOT NULL,
+	[ServiceCharge] [smallmoney] NOT NULL,
  CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED 
 (
 	[OrderID] ASC
