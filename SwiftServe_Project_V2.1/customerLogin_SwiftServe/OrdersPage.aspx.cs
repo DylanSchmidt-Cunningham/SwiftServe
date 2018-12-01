@@ -16,8 +16,8 @@ namespace OrdersPage
         {
             if (!IsPostBack)
             {
-                BindOrderGridView();
-                BindMenuGridView("Cafe");
+                BindOrderGridView(); // order history
+                BindMenuGridView("Cafe"); // placing orders
             }
         }
 
@@ -28,6 +28,7 @@ namespace OrdersPage
         }
 
         // placing orders
+        // this populates the menu for the selected restaurant
         #region Bind Menu GridView
         private void BindMenuGridView(string restaurant)
         {
@@ -57,7 +58,7 @@ namespace OrdersPage
             {
                 connection.Close();
             }
-        }
+        } // BindMenuGridView
         #endregion
 
         // order history
@@ -98,6 +99,7 @@ namespace OrdersPage
         #endregion
 
         // order history
+        // this updates the food list gridview to show the food items that are part of the selected row in the order history
         protected void OnSelectedIndexChanged(Object sender, EventArgs e)
         {
             int orderID = Convert.ToInt32(OrderGridView.SelectedRow.Cells[0].Text);
@@ -129,15 +131,17 @@ namespace OrdersPage
             {
                 connection.Close();
             }
-        }
+        } // OnSelectedIndexChanged
 
-        // ??? TODO
-        protected void BtnConfirmOrder_Click(object sender, EventArgs e)
-        {
-            Response.Redirect("OrderConfirm.aspx");
-        }
+        // ??? TODO is this actually used anywhere?
+        // I think OnOrderButtonClicked is used instead
+        //protected void BtnConfirmOrder_Click(object sender, EventArgs e)
+        //{
+        //    Response.Redirect("OrderConfirm.aspx");
+        //}
 
         // placing orders
+        // this updates the restaurant selection
         protected void RadioButton_CheckedChanged(object sender, EventArgs e)
         {
             string restaurant;
@@ -173,9 +177,10 @@ namespace OrdersPage
 
             // update the menu
             BindMenuGridView(restaurant);
-        }
+        } // RadioButton_CheckedChanged
 
         // placing orders
+        // this submits the order details to the OrderConfirm page
         protected void OnOrderButtonClicked(Object sender, EventArgs e)
         {
             string parameters = ""; // for the request URL
@@ -184,10 +189,11 @@ namespace OrdersPage
             foreach (GridViewRow row in MenuGridView.Rows)
             {
                 // find the selection from the quantity drop-down list
-                int index = ((DropDownList)row.FindControl("QtyList")).SelectedIndex;
+                DropDownList Qty = (DropDownList)row.FindControl("QtyList");
+                int index = Qty.SelectedIndex;
 
                 // we want all the items with non-zero quantities
-                if (Items[index].Value > 0)
+                if (Convert.ToInt32(Qty.Items[index].Value) > 0)
                 {
                     // &food1=fish&quantity1=1&food2=chips&quantity2=1
                     parameters += "&food" + paramIndex + "=" + row.Cells[1].Text + "&price" + paramIndex + "=" + row.Cells[2].Text;
@@ -198,8 +204,10 @@ namespace OrdersPage
             // do we have any items to purchase at all?
             if(parameters.Length > 0)
             {
-                // first parameter in the list is restaurant name, followed by our list of ingredient-quantity pairs
-                parameters = "?restaurant=" + MenuGridView.Rows[0].Cells[0].Text + parameters;
+                // first parameters in the list are restaurant name and delay time, followed by our list of ingredient-quantity pairs
+                parameters = "?restaurant=" + MenuGridView.Rows[0].Cells[0].Text
+                           + "&delay=" + DelayDropDownList.Items[DelayDropDownList.SelectedIndex].Value
+                           + parameters;
                 string request = "OrderConfirm.aspx" + parameters;
                 // go to order confirm page
                 Response.Redirect(request);
@@ -210,6 +218,6 @@ namespace OrdersPage
                 // TODO add empty text area thingy to put error message in
                 string err = "No menu items selected in order.  Please select quantities to order from the drop-down lists.";
             }
-        }
+        } // OnOrderButtonClicked
     }
 }

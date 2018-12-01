@@ -258,6 +258,42 @@ REFERENCES [dbo].[Orders] ([OrderID])
 GO
 ALTER TABLE [dbo].[Order_Items] CHECK CONSTRAINT [FK_Order_Items_Orders]
 GO
+ALTER TABLE [dbo].[Menu_Items]  WITH CHECK ADD  CONSTRAINT [CK_Menu_Items_Price_GTE_Zero] CHECK  (([Price]>=(0)))
+GO
+ALTER TABLE [dbo].[Menu_Items] CHECK CONSTRAINT [CK_Menu_Items_Price_GTE_Zero]
+GO
+ALTER TABLE [dbo].[Order_Items]  WITH CHECK ADD  CONSTRAINT [CK_Order_Items_Price_GTE_Zero] CHECK  (([Price]>=(0)))
+GO
+ALTER TABLE [dbo].[Order_Items] CHECK CONSTRAINT [CK_Order_Items_Price_GTE_Zero]
+GO
+ALTER TABLE [dbo].[Order_Items]  WITH CHECK ADD  CONSTRAINT [CK_Order_Items_Quantity_GT_Zero] CHECK  (([Quantity]>(0)))
+GO
+ALTER TABLE [dbo].[Order_Items] CHECK CONSTRAINT [CK_Order_Items_Quantity_GT_Zero]
+GO
+ALTER TABLE [dbo].[Orders]  WITH CHECK ADD  CONSTRAINT [CK_Orders_Delay_GTE_Zero] CHECK  (([DelayTime]>=(0)))
+GO
+ALTER TABLE [dbo].[Orders] CHECK CONSTRAINT [CK_Orders_Delay_GTE_Zero]
+GO
+ALTER TABLE [dbo].[Orders]  WITH CHECK ADD  CONSTRAINT [CK_Orders_Delay_LTE_60] CHECK  (([DelayTime]<=(60)))
+GO
+ALTER TABLE [dbo].[Orders] CHECK CONSTRAINT [CK_Orders_Delay_LTE_60]
+GO
+ALTER TABLE [dbo].[Orders]  WITH CHECK ADD  CONSTRAINT [CK_Orders_Tax_GTE_Zero] CHECK  (([Taxes]>=(0)))
+GO
+ALTER TABLE [dbo].[Orders] CHECK CONSTRAINT [CK_Orders_Tax_GTE_Zero]
+GO
+ALTER TABLE [dbo].[Orders]  WITH CHECK ADD  CONSTRAINT [CK_Orders_Semitotal_GTE_Zero] CHECK  (([Semitotal]>=(0)))
+GO
+ALTER TABLE [dbo].[Orders] CHECK CONSTRAINT [CK_Orders_Semitotal_GTE_Zero]
+GO
+ALTER TABLE [dbo].[Orders]  WITH CHECK ADD  CONSTRAINT [CK_Orders_ServiceCharge_GTE_Zero] CHECK  (([ServiceCharge]>=(0)))
+GO
+ALTER TABLE [dbo].[Orders] CHECK CONSTRAINT [CK_Orders_ServiceCharge_GTE_Zero]
+GO
+ALTER TABLE [dbo].[Orders]  WITH CHECK ADD  CONSTRAINT [CK_Orders_Status_Options] CHECK  (([Status]='Complete' OR [Status]='In Progress' OR [Status]='New'))
+GO
+ALTER TABLE [dbo].[Orders] CHECK CONSTRAINT [CK_Orders_Status_Options]
+GO
 ALTER TABLE [dbo].[Restaurant]  WITH CHECK ADD  CONSTRAINT [CK_Rest_PhoneNo] CHECK  (([PhoneNo] like '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'))
 GO
 ALTER TABLE [dbo].[Restaurant] CHECK CONSTRAINT [CK_Rest_PhoneNo]
@@ -265,6 +301,24 @@ GO
 ALTER TABLE [dbo].[Restaurant]  WITH CHECK ADD  CONSTRAINT [CK_Rest_Website] CHECK  (([Website] like '%.%.com%' OR [Website] like '%.%.ca%'))
 GO
 ALTER TABLE [dbo].[Restaurant] CHECK CONSTRAINT [CK_Rest_Website]
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Price cannot be negative' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Menu_Items', @level2type=N'CONSTRAINT',@level2name=N'CK_Menu_Items_Price_GTE_Zero'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Price cannot be negative' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Order_Items', @level2type=N'CONSTRAINT',@level2name=N'CK_Order_Items_Price_GTE_Zero'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Quantity must be at least 1' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Order_Items', @level2type=N'CONSTRAINT',@level2name=N'CK_Order_Items_Quantity_GT_Zero'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Delay time cannot be negative' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'CONSTRAINT',@level2name=N'CK_Orders_Delay_GTE_Zero'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Delay is at most 60 minutes' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'CONSTRAINT',@level2name=N'CK_Orders_Delay_LTE_60'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Taxes cannot be negative' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'CONSTRAINT',@level2name=N'CK_Orders_GTE_Zero'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Semitotal cannot be negative' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'CONSTRAINT',@level2name=N'CK_Orders_Semitotal_GTE_Zero'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'ServiceCharge cannot be negative' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'CONSTRAINT',@level2name=N'CK_Orders_ServiceCharge_GTE_Zero'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Status must be ''New'', ''In Progress'', or ''Complete''' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'CONSTRAINT',@level2name=N'CK_Orders_Status_Options'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'check the format of the restaurant''s phone number' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Restaurant', @level2type=N'CONSTRAINT',@level2name=N'CK_Rest_PhoneNo'
 GO

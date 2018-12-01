@@ -100,10 +100,32 @@
         </div>
         <!-- everything above must go -->
         <div>
-            <asp:GridView ID="GridView1" runat="server">
+            <asp:GridView id="OrderDetailsGridView" runat="server"
+                      AutoGenerateColumns="false"
+                      ShowFooter="true">
+            <Columns>
+                <asp:BoundField DataField="RestaurantName"
+                      HeaderText="Restaurant" ReadOnly="true"/>
+                <asp:BoundField DataField="Subtotal"
+                      HeaderText="Subtotal"/>
+                <asp:BoundField DataField="Tax"
+                      HeaderText="Tax"/>
+                <asp:BoundField DataField="ServiceFee"
+                      HeaderText="Service Fee"/>
+                <asp:BoundField DataField="Total"
+                      HeaderText="Total Cost"/>
+                <asp:ButtonField Text="Select" CommandName="Select" />
+            </Columns>
+
             </asp:GridView>
             <br />
-            <asp:GridView ID="GridView2" runat="server">
+            <asp:GridView ID="OrderItemsView" runat="server" AutoGenerateRows="false">
+                <Columns>
+                    <asp:BoundField DataField="Menu_Item_Name" HeaderText="Name" HeaderStyle-Font-Bold="true" />
+                    <asp:BoundField DataField="Quantity" HeaderText="Quantity" HeaderStyle-Font-Bold="true" />
+                    <asp:BoundField DataField="Price" HeaderText="Price" HeaderStyle-Font-Bold="true" />
+                    <asp:BoundField DataField="Subtotal" HeaderText="Subtotal" HeaderStyle-Font-Bold="true" />
+                </Columns>
             </asp:GridView>
         </div>
         <p>
