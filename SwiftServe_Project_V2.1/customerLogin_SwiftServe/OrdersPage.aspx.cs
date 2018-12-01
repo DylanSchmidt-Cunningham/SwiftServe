@@ -37,7 +37,7 @@ namespace OrdersPage
             try
             {
                 connection.Open();
-                string sqlStatement = "SELECT RestaurantName, Name, Price FROM Menu_Items WHERE Visible = TRUE and InStock = TRUE AND RestaurantName = '" + restaurant + "'";
+                string sqlStatement = "SELECT RestaurantName, Name, Price FROM Menu_Items WHERE Visible = 1 and InStock = 1 AND RestaurantName = '" + restaurant + "'";
                 SqlCommand cmd = new SqlCommand(sqlStatement, connection);
                 SqlDataAdapter sqlData = new SqlDataAdapter(cmd);
 
@@ -70,9 +70,8 @@ namespace OrdersPage
             try
             {
                 connection.Open();
-                // TODO migrate tax rate and service fee %age to app.config or something
                 string sqlStatement = "SELECT Orders.OrderID, RestaurantName, MIN(CreationTime) AS CreationTime, "
-                    + "SUM(Subtotal) AS Subtotal, 0.13 * SUM(Subtotal) AS Tax, 0.13 * SUM(Subtotal) AS ServiceFee, 1.26 * SUM(Subtotal) AS Total, MIN(Orders.Status) AS Status "
+                    + "MIN(Semitotal) AS Subtotal, Min(Taxes) AS Tax, MIN(ServiceCharge) AS ServiceFee, MIN(Semitotal + Taxes + ServiceCharge) AS Total, MIN(Orders.Status) AS Status "
                     + "FROM Orders, Order_Items, Menu_Items WHERE Orders.CentennialEmail = '" + Session["username"]
                     + "' AND Orders.OrderID = Order_Items.OrderID AND Order_Items.Menu_Item_Name = Menu_Items.Name GROUP BY Orders.OrderID, Menu_Items.RestaurantName";
                 SqlCommand cmd = new SqlCommand(sqlStatement, connection);

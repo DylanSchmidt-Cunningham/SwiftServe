@@ -1,21 +1,11 @@
 SQL Queries for Order stuff
 
 What are our order statuses?
-I haven't stopped to look it up
+New
+In Progress
+Complete
 
-my thoughts were:
-
-           (only by restaurant)
-    +--------------------------------+
-    |                                |
-    |                +-->PLACING-->PLACED-->READY
-    V       (2:00)   |     ^
-CANCELLED<--CREATED--|     |
-               ^     |     |
-             start   +-->ON HOLD
-                        (user-requested delay)
-
-right now, only Created status matters because that will be the status when we insert new orders
+right now, only New status matters because that will be the status when we insert new orders
 these will matter more when we start tracking order status
 
 oh, an aside about prices
@@ -24,6 +14,8 @@ this will produce inconsistencies if the menu_items table is updated
 this is deliberate
 we want this
 if a restaurant changes its prices, it doesn't retroactively change past bills, yeah?
+same goes for the taxes and serviceCharge columns
+those rates can change, it's not retroacive
 
 ---
 
@@ -44,13 +36,14 @@ https://www.aspsnippets.com/Articles/ASPNet-GridView-DetailsView-Master-Detail-E
 ---
 
 Getting all old orders for a user:
-"SELECT (OrderID, Creation_Time, Total, Status, RestaurantName) FROM Orders, Order_Items, Menu_Items WHERE Orders.CentennialEmail = '" + Session["username"] + "' AND Orders.OrderID = Order_Items.OrderID AND Order_Items.Menu_Item_Name = Menu_Items.Name GROUP BY Orders.OrderID"
+"SELECT Orders.OrderID, RestaurantName, MIN(CreationTime) AS CreationTime, "
++ "MIN(Semitotal) AS Subtotal, Min(Taxes) AS Tax, MIN(ServiceCharge) AS ServiceFee, MIN(Semitotal + Taxes + ServiceCharge) AS Total, MIN(Orders.Status) AS Status "
++ "FROM Orders, Order_Items, Menu_Items WHERE Orders.CentennialEmail = '" + Session["username"]
++ "' AND Orders.OrderID = Order_Items.OrderID AND Order_Items.Menu_Item_Name = Menu_Items.Name GROUP BY Orders.OrderID, Menu_Items.RestaurantName"
 the GROUP BY is crucial because there's several order_items per order, but they all reference the same restaurant's menu and we only need one copy of the restaurant's name
 
-Then use a DetailsView to show the menu items ordered on selected orders... bluh, there's no easy option for this, is there?
-"SELECT (Menu_Item_Name, Quantity, Price) FROM Order_Items WHERE OrderID IN (SELECT OrderID FROM Orders WHERE CentennialEmail = '"
-                    + Session["username"] + "')"
-that's a naive list, we'll be replacing the subquery with the OrderID of the row in the parent GridView
+Then use a GridView to show the menu items ordered on selected orders:
+"SELECT Menu_Item_Name, Quantity, Price, Subtotal FROM Order_Items WHERE OrderID = " + orderID + ")"
 
 ---
 
@@ -63,6 +56,8 @@ then run up the total
 how to organize it so that the list of request parameters is iterable and can run through a loop, that's the tricky part
 can you send a DataTable or something?  I don't know
 
+this query is woefully out-of-date because I've made many changes to the databse since writing it
+
 DateTime now = DateTime.NOW; // C#
 "INSERT INTO Orders (CentennialEmail, CreationTime, DelayTime, Status) VALUES ('" + Session["username"] +"', '" + now + "', 0, 'Created')"
 
@@ -74,10 +69,7 @@ parse that query result for value to assign C# variable orderId
 ---
 
 Displaying menu items to choose from
-"SELECT (Name, RestaurantName, Price) FROM Menu_Items WHERE Visible = TRUE AND InStock = TRUE"
-we'll need to add 
-	" AND Restaurant_Name = '" + Request["restaurantName"] + "'"
-later when that feature's supported... for now it lists for all restaurants, though with my test data that's just Timmies
+"SELECT RestaurantName, Name, Price FROM Menu_Items WHERE Visible = 1 and InStock = 1 AND RestaurantName = '" + restaurant + "'"
 this then needs columns for entering quantity (not read-only, unlike the others) and pull all quantities > 0 for generating the order
 don't actually generate the order yet, just pass the info over to the confirm page
 let the confirm page calculate the total cost and make a dummy order (note that OrderID is auto-increment, so no need to provide a value for it)
