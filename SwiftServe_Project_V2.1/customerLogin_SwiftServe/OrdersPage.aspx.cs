@@ -190,13 +190,13 @@ namespace OrdersPage
             {
                 // find the selection from the quantity drop-down list
                 DropDownList Qty = (DropDownList)row.FindControl("QtyList");
-                int index = Qty.SelectedIndex;
+                int qty = Convert.ToInt32(Qty.Items[Qty.SelectedIndex].Value);
 
                 // we want all the items with non-zero quantities
-                if (Convert.ToInt32(Qty.Items[index].Value) > 0)
+                if (qty > 0)
                 {
-                    // &food1=fish&quantity1=1&food2=chips&quantity2=1
-                    parameters += "&food" + paramIndex + "=" + row.Cells[1].Text + "&price" + paramIndex + "=" + row.Cells[2].Text;
+                    // &food1=fish&qty1=1&food2=chips&qty2=1
+                    parameters += "&food" + paramIndex + "=" + row.Cells[1].Text + "&qty" + paramIndex + "=" + qty;
                     paramIndex++;
                 }
             }
