@@ -80,12 +80,9 @@
             </asp:GridView>
         </div>
         <br />
+        Ready to pick up in the next&nbsp;
         <asp:DropDownList ID="DelayDropDownList" runat="server">
-            <asp:ListItem Text="0:00" Value="0" Selected="True"></asp:ListItem>
-            <asp:ListItem Text="5:00" Value="5"></asp:ListItem>
-            <asp:ListItem Text="10:00" Value="10"></asp:ListItem>
-            <asp:ListItem Text="15:00" Value="15"></asp:ListItem>
-            <asp:ListItem Text="20:00" Value="20"></asp:ListItem>
+            <asp:ListItem Text="20:00" Value="20" Selected="True"></asp:ListItem>
             <asp:ListItem Text="25:00" Value="25"></asp:ListItem>
             <asp:ListItem Text="30:00" Value="30"></asp:ListItem>
             <asp:ListItem Text="35:00" Value="35"></asp:ListItem>
@@ -93,9 +90,10 @@
             <asp:ListItem Text="45:00" Value="45"></asp:ListItem>
             <asp:ListItem Text="50:00" Value="50"></asp:ListItem>
             <asp:ListItem Text="55:00" Value="55"></asp:ListItem>
-            <asp:ListItem Text="1:00:00" Value="60"></asp:ListItem>
+            <asp:ListItem Text="60:00" Value="60"></asp:ListItem>
         </asp:DropDownList>
-        <asp:Button ID="PlaceOrder" runat="server" OnClientClick="OnOrderButtonClicked" Text="Place Order" />
+        &nbsp;minutes.<br />
+&nbsp;<asp:Button ID="PlaceOrder" runat="server" OnClientClick="OnOrderButtonClicked" Text="Place Order" />
         <br />
         <br />
         <br />

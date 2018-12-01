@@ -270,9 +270,9 @@ ALTER TABLE [dbo].[Order_Items]  WITH CHECK ADD  CONSTRAINT [CK_Order_Items_Quan
 GO
 ALTER TABLE [dbo].[Order_Items] CHECK CONSTRAINT [CK_Order_Items_Quantity_GT_Zero]
 GO
-ALTER TABLE [dbo].[Orders]  WITH CHECK ADD  CONSTRAINT [CK_Orders_Delay_GTE_Zero] CHECK  (([DelayTime]>=(0)))
+ALTER TABLE [dbo].[Orders]  WITH CHECK ADD  CONSTRAINT [CK_Orders_Delay_GTE_20] CHECK  (([DelayTime]>=(20)))
 GO
-ALTER TABLE [dbo].[Orders] CHECK CONSTRAINT [CK_Orders_Delay_GTE_Zero]
+ALTER TABLE [dbo].[Orders] CHECK CONSTRAINT [CK_Orders_Delay_GTE_20]
 GO
 ALTER TABLE [dbo].[Orders]  WITH CHECK ADD  CONSTRAINT [CK_Orders_Delay_LTE_60] CHECK  (([DelayTime]<=(60)))
 GO
