@@ -132,8 +132,8 @@
             </asp:GridView>
         </div>
         <p>
-            <asp:Button ID="Btn_Cancel" runat="server" Text="Cancel" />
-            <asp:Button ID="Btn_Confirm" runat="server" Text="Confirm Order" />
+            <asp:Button ID="Btn_Cancel" runat="server" OnClientClick="OnCancelButtonClicked" Text="Cancel" />
+            <asp:Button ID="Btn_Confirm" runat="server" OnClientClick="OnConfirmButtonClicked" Text="Confirm Order" />
         </p>
     </form>
 </body>

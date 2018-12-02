@@ -248,5 +248,75 @@ namespace OrdersPage
             return 0.13 * baseCost;
         }
 
+        // return to menu page
+        protected void OnCancelButtonClicked(Object sender, EventArgs e)
+        {
+            // TODO if the menu page is different in the integrated project, redirect there instead
+            Response.Redirect("OrdersPage.aspx");
+        }
+
+        // insert the order and order items into their respective tables
+        protected void OnConfirmButtonClicked(Object sender, EventArgs e)
+        {
+            // record the time, since we'll need reusable access to it for later
+            DateTime now = DateTime.Now;
+
+            // gather data needed for insert queries from the OrderSummaryGridView
+            string restaurant = OrderSummaryGridView.Rows[0].Cells[0].Text;
+            string delay = OrderSummaryGridView.Rows[0].Cells[1].Text;
+            string semitotal = OrderSummaryGridView.Rows[0].Cells[2].Text;
+            string taxes = OrderSummaryGridView.Rows[0].Cells[3].Text;
+            string serviceCharge = OrderSummaryGridView.Rows[0].Cells[4].Text;
+            // we're not bothering with total because it's a derived column anyway
+            // TODO add total as a queriable derived column, databse changes never end
+
+            SqlConnection connection = new SqlConnection(GetConnectionString());
+
+            // insert order first
+            string sqlStatement = "INSERT INTO Orders (CentennialEmail, CreationTime, DelayTime, Status, SemiTotal, Taxes, ServiceCharge) VALUES ('"
+                + Session["username"] + "', '" + now + "', " + delay + ", 'New', " + semitotal + ", " + taxes + ", " + serviceCharge + ")";
+            SqlCommand cmd = new SqlCommand(sqlStatement, connection);
+            // do I need these?  Look up how to execute an insert query string
+            SqlDataAdapter sqlData = new SqlDataAdapter(cmd);
+            //DataTable temp = new DataTable();
+            // TODO inserty stuff
+
+            // retrieve OrderID for our new order using creation time
+            sqlStatement = "SELECT OrderID FROM Orders WHERE CentennialEmail = '" + Session["username"] + "' AND CreationTime = '" + now + "'";
+            cmd = new SqlCommand(sqlStatement, connection);
+            // TODO parse that query result for value to assign C# variable orderId
+            // look at the temp DataTable above for how, it's easy
+            DataTable temp = new DataTable();
+
+            sqlData.Fill(temp); // should only be one row due to RestaurantName + Name uniqueness
+            if (temp.Rows.Count > 0)
+            {
+                string orderId = (string)temp.Rows[0].ItemArray[0];
+                
+                // insert order_items
+                foreach (GridViewRow row in OrderItemsView.Rows)
+                {
+                    // gather data needed for insert query
+                    string food = row.Cells[0].Text;
+                    string price = row.Cells[1].Text;
+                    string qty = row.Cells[2].Text;
+
+                    // insert item in table
+                    sqlStatement = "INSERT INTO Order_Items (Menu_Item_Name, OrderID, Price, Quantity) VALUES ('"
+                        + food + "', " + orderId + ", " + price + ", " + qty + ")";
+                    // TODO inserty stuff
+                }
+            }
+            else
+            {
+                // can't find the new order
+                // TODO hey front-end people!  Do you want to display an error message?
+            }
+
+            // TODO I'm not really sure what page we go to after creating an order, so change this if necessary
+            // we need a page with a two-minute timer to cancel the order, but I have no such page in this version
+            Response.Redirect("OrdersPage.aspx");
+        }
+
     }
 }

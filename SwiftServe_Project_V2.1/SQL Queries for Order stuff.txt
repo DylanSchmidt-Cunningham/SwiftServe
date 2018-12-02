@@ -56,15 +56,15 @@ then run up the total
 how to organize it so that the list of request parameters is iterable and can run through a loop, that's the tricky part
 can you send a DataTable or something?  I don't know
 
-this query is woefully out-of-date because I've made many changes to the databse since writing it
-
 DateTime now = DateTime.NOW; // C#
-"INSERT INTO Orders (CentennialEmail, CreationTime, DelayTime, Status) VALUES ('" + Session["username"] +"', '" + now + "', 0, 'Created')"
+"INSERT INTO Orders (CentennialEmail, CreationTime, DelayTime, Status, SemiTotal, Taxes, ServiceCharge) VALUES ('"
+ + Session["username"] + "', '" + now + "', " + delay + ", 'New', " + semitotal + ", " + taxes + ", " + serviceCharge + ")"
 
 "SELECT OrderID FROM Orders WHERE CentennialEmail = '" + Session["username"] + "' AND CreationTime = '" + now + "'"
 parse that query result for value to assign C# variable orderId
 
-"INSERT INTO Order_Items (Menu_Item, Name, OrderID, Price, Qty) VALUES ('" + Menu_Item_Name + "', " + orderId + ", " + Price + ", " + Quantity + ")"
+sqlStatement = "INSERT INTO Order_Items (Menu_Item_Name, OrderID, Price, Quantity) VALUES ('"
+ + food + "', " + orderId + ", " + price + ", " + qty + ")";
 
 ---
 
