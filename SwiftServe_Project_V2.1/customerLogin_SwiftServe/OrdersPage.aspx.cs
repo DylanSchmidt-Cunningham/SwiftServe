@@ -37,7 +37,7 @@ namespace OrdersPage
             try
             {
                 connection.Open();
-                string sqlStatement = "SELECT RestaurantName, Name, Price FROM Menu_Items WHERE Visible = 1 and InStock = 1 AND RestaurantName = '" + restaurant + "'";
+                string sqlStatement = "SELECT RestaurantName, Name, Price FROM Menu_Items WHERE Visible = 1 AND InStock = 1 AND RestaurantName = '" + restaurant + "'";
                 SqlCommand cmd = new SqlCommand(sqlStatement, connection);
                 SqlDataAdapter sqlData = new SqlDataAdapter(cmd);
 
@@ -48,7 +48,7 @@ namespace OrdersPage
                     MenuGridView.DataBind();
                 }
             }
-            catch (System.Data.SqlClient.SqlException ex)
+            catch (SqlException ex)
             {
                 string msg = "Fetch Error: ";
                 msg += ex.Message;
@@ -120,7 +120,7 @@ namespace OrdersPage
                     OrderItemDetailsView.DataBind();
                 }
             }
-            catch (System.Data.SqlClient.SqlException ex)
+            catch (SqlException ex)
             {
                 string msg = "Fetch Error: ";
                 msg += ex.Message;

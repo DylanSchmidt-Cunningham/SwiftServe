@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="OrderConfirm.aspx.cs" Inherits="OrdersPage.OrderConfirm" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="OrderConfirm.aspx.cs" Inherits="OrdersPage.OrderConfirm" %>
 
 <!DOCTYPE html>
 <style>
@@ -18,6 +18,7 @@
 <body>
     <form id="form1" runat="server">
         <!-- this table is a dummy; it's pretty and all, but it has to be replaced -->
+        <!--
         <div>
             <table style="width: 100%;">
                 <tbody class="auto-style1">
@@ -98,23 +99,25 @@
                 </tr>
             </table>
         </div>
+        -->
         <!-- everything above must go -->
         <div>
-            <asp:GridView id="OrderDetailsGridView" runat="server"
+            <asp:GridView id="OrderSummaryGridView" runat="server"
                       AutoGenerateColumns="false"
                       ShowFooter="true">
             <Columns>
                 <asp:BoundField DataField="RestaurantName"
                       HeaderText="Restaurant" ReadOnly="true"/>
-                <asp:BoundField DataField="Subtotal"
+                <asp:BoundField DataField="DelayTime"
+                      HeaderText="Delivery Time"/>
+                <asp:BoundField DataField="Semitotal"
                       HeaderText="Subtotal"/>
-                <asp:BoundField DataField="Tax"
+                <asp:BoundField DataField="Taxes"
                       HeaderText="Tax"/>
-                <asp:BoundField DataField="ServiceFee"
+                <asp:BoundField DataField="ServiceCharge"
                       HeaderText="Service Fee"/>
                 <asp:BoundField DataField="Total"
                       HeaderText="Total Cost"/>
-                <asp:ButtonField Text="Select" CommandName="Select" />
             </Columns>
 
             </asp:GridView>
@@ -122,8 +125,8 @@
             <asp:GridView ID="OrderItemsView" runat="server" AutoGenerateRows="false">
                 <Columns>
                     <asp:BoundField DataField="Menu_Item_Name" HeaderText="Name" HeaderStyle-Font-Bold="true" />
-                    <asp:BoundField DataField="Quantity" HeaderText="Quantity" HeaderStyle-Font-Bold="true" />
                     <asp:BoundField DataField="Price" HeaderText="Price" HeaderStyle-Font-Bold="true" />
+                    <asp:BoundField DataField="Quantity" HeaderText="Quantity" HeaderStyle-Font-Bold="true" />
                     <asp:BoundField DataField="Subtotal" HeaderText="Subtotal" HeaderStyle-Font-Bold="true" />
                 </Columns>
             </asp:GridView>
