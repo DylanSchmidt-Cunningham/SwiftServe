@@ -276,19 +276,15 @@ namespace OrdersPage
             string sqlStatement = "INSERT INTO Orders (CentennialEmail, CreationTime, DelayTime, Status, SemiTotal, Taxes, ServiceCharge) VALUES ('"
                 + Session["username"] + "', '" + now + "', " + delay + ", 'New', " + semitotal + ", " + taxes + ", " + serviceCharge + ")";
             SqlCommand cmd = new SqlCommand(sqlStatement, connection);
-            // do I need these?  Look up how to execute an insert query string
-            SqlDataAdapter sqlData = new SqlDataAdapter(cmd);
-            //DataTable temp = new DataTable();
-            // TODO inserty stuff
+            cmd.ExecuteNonQuery();
 
             // retrieve OrderID for our new order using creation time
             sqlStatement = "SELECT OrderID FROM Orders WHERE CentennialEmail = '" + Session["username"] + "' AND CreationTime = '" + now + "'";
             cmd = new SqlCommand(sqlStatement, connection);
-            // TODO parse that query result for value to assign C# variable orderId
-            // look at the temp DataTable above for how, it's easy
+            SqlDataAdapter sqlData = new SqlDataAdapter(cmd);
             DataTable temp = new DataTable();
-
             sqlData.Fill(temp); // should only be one row due to RestaurantName + Name uniqueness
+
             if (temp.Rows.Count > 0)
             {
                 string orderId = (string)temp.Rows[0].ItemArray[0];
@@ -304,7 +300,8 @@ namespace OrdersPage
                     // insert item in table
                     sqlStatement = "INSERT INTO Order_Items (Menu_Item_Name, OrderID, Price, Quantity) VALUES ('"
                         + food + "', " + orderId + ", " + price + ", " + qty + ")";
-                    // TODO inserty stuff
+                    cmd = new SqlCommand(sqlStatement, connection);
+                    cmd.ExecuteNonQuery();
                 }
             }
             else
