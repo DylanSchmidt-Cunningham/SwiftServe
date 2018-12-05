@@ -5,11 +5,11 @@ CREATE DATABASE [SwiftServe]
  CONTAINMENT = NONE
  ON  PRIMARY 
  /* Uncomment the address string that works for your environment: lab computers are ..\MSSQL13.MSSQLSERVER2016\.., Dylan's computer is just ..\MSSQL13.MSSQLSERVER\.. */
-( NAME = N'SwiftServe', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\DATA\SwiftServe.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
-/*( NAME = N'SwiftServe', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER2016\MSSQL\DATA\SwiftServe.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )*/
+/*( NAME = N'SwiftServe', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\DATA\SwiftServe.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )*/
+( NAME = N'SwiftServe', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER2016\MSSQL\DATA\SwiftServe.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
  LOG ON 
-( NAME = N'SwiftServe_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\DATA\SwiftServe_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
-/*( NAME = N'SwiftServe_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER2016\MSSQL\DATA\SwiftServe_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )*/
+/*( NAME = N'SwiftServe_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\DATA\SwiftServe_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )*/
+( NAME = N'SwiftServe_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER2016\MSSQL\DATA\SwiftServe_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
 GO
 ALTER DATABASE [SwiftServe] SET COMPATIBILITY_LEVEL = 130
 GO
@@ -308,11 +308,11 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Price cannot b
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Quantity must be at least 1' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Order_Items', @level2type=N'CONSTRAINT',@level2name=N'CK_Order_Items_Quantity_GT_Zero'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Delay time cannot be negative' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'CONSTRAINT',@level2name=N'CK_Orders_Delay_GTE_Zero'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Delay time cannot be negative' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'CONSTRAINT',@level2name=N'CK_Orders_Delay_GTE_20'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Delay is at most 60 minutes' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'CONSTRAINT',@level2name=N'CK_Orders_Delay_LTE_60'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Taxes cannot be negative' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'CONSTRAINT',@level2name=N'CK_Orders_GTE_Zero'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Taxes cannot be negative' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'CONSTRAINT',@level2name=N'CK_Orders_Tax_GTE_Zero'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Semitotal cannot be negative' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'CONSTRAINT',@level2name=N'CK_Orders_Semitotal_GTE_Zero'
 GO
