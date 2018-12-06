@@ -11,12 +11,12 @@
         <div>
             Restaurant Selection:
             <br />
-            <asp:RadioButton runat="server" GroupName="Restaurant" ID="RB_EpicBurger" Text="Epic Burger"></asp:RadioButton>
-            <asp:RadioButton runat="server" GroupName="Restaurant" ID="RB_Cafe" Text="Main Cafeteria"></asp:RadioButton>
-            <asp:RadioButton runat="server" GroupName="Restaurant" ID="RB_PizzaPizza" Text="Pizza Pizza"></asp:RadioButton>
-            <asp:RadioButton runat="server" GroupName="Restaurant" ID="RB_Poutinerie" Text="Smoke's Poutinerie"></asp:RadioButton>
-            <asp:RadioButton runat="server" GroupName="Restaurant" ID="RB_Subway" Text="Subway"></asp:RadioButton>
-            <asp:RadioButton runat="server" GroupName="Restaurant" ID="RB_Timmies" Text="Tim Horton's"></asp:RadioButton>
+            <asp:RadioButton runat="server" AutoPostBack="true" GroupName="Restaurant" ID="RB_EpicBurger" Text="Epic Burger" OnCheckedChanged="RadioButton_CheckedChanged"></asp:RadioButton>
+            <asp:RadioButton runat="server" AutoPostBack="true" GroupName="Restaurant" ID="RB_Cafe" Text="Main Cafeteria" OnCheckedChanged="RadioButton_CheckedChanged"></asp:RadioButton>
+            <asp:RadioButton runat="server" AutoPostBack="true" GroupName="Restaurant" ID="RB_PizzaPizza" Text="Pizza Pizza" OnCheckedChanged="RadioButton_CheckedChanged"></asp:RadioButton>
+            <asp:RadioButton runat="server" AutoPostBack="true" GroupName="Restaurant" ID="RB_Poutinerie" Text="Smoke's Poutinerie" OnCheckedChanged="RadioButton_CheckedChanged"></asp:RadioButton>
+            <asp:RadioButton runat="server" AutoPostBack="true" GroupName="Restaurant" ID="RB_Subway" Text="Subway" OnCheckedChanged="RadioButton_CheckedChanged"></asp:RadioButton>
+            <asp:RadioButton runat="server" AutoPostBack="true" GroupName="Restaurant" ID="RB_Timmies" Text="Tim Horton's" OnCheckedChanged="RadioButton_CheckedChanged"></asp:RadioButton>
         </div>
         <br />
         <br />
@@ -93,7 +93,7 @@
             <asp:ListItem Text="60:00" Value="60"></asp:ListItem>
         </asp:DropDownList>
         &nbsp;minutes.<br />
-&nbsp;<asp:Button ID="PlaceOrder" runat="server" OnClientClick="OnOrderButtonClicked" Text="Place Order" />
+&nbsp;<asp:Button ID="PlaceOrder" runat="server" OnClientClick="OnOrderButtonClicked" Text="Place Order" OnClick="OnOrderButtonClicked" />
         <br />
         <br />
         <br />

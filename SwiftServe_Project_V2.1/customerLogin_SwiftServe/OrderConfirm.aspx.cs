@@ -21,10 +21,13 @@ namespace OrdersPage
             // ?restaurant=foo&delay=bar&food1=fish&qty1=1&food2=chips&qty2=1
             string restaurant = Request.QueryString["restaurant"];
             int delay = Convert.ToInt32(Request.QueryString["delay"]);
+            Console.Write("unsanitized restaurant: " + restaurant);
+            Console.Write("unsanitized delay: " + delay);
             // validate params
             restaurant = validateString(restaurant);
             delay = Math.Max(delay, 20); // at least 20
             delay = Math.Min(delay, 60); // at most 60
+            Console.Write("sanitized delay: " + delay);
 
             // create table to hold query results for our GridView
             DataTable foodTable = new DataTable("FoodTable");
@@ -130,7 +133,7 @@ namespace OrdersPage
             double semiTotal = 0.0;
 
             // now the databasey stuff
-            SqlConnection connection = new SqlConnection(GetConnectionString());
+            SqlConnection connection = new SqlConnection("Data Source=PRIS;Initial Catalog=SwiftServe;Integrated Security=True");
 
             try
             {
@@ -143,14 +146,19 @@ namespace OrdersPage
                 while (true)
                 {
                     string food = Request.QueryString["food" + i];
+                    Console.Write("unsanitized food" + i + ": " + food);
                     if (food == null) break; // end of query params
                     int qty = Convert.ToInt32(Request.QueryString["qty" + i]);
+                    Console.Write("unsanitized qty" + i + ": " + qty);
                     // validate params
                     food = validateString(food);
+                    Console.Write("sanitized food" + i + ": " + food);
                     qty = Math.Max(qty, 1); // minimum 1
+                    Console.Write("sanitized qty" + i + ": " + qty);
 
                     // query database for menu item information
                     string sqlStatement = "SELECT Price FROM Menu_Items WHERE RestaurantName = '" + restaurant + "' AND Name = '" + food + "'";
+                    Console.Write("SELECT Price FROM Menu_Items WHERE RestaurantName = '" + restaurant + "' AND Name = '" + food + "'");
                     SqlCommand cmd = new SqlCommand(sqlStatement, connection);
                     SqlDataAdapter sqlData = new SqlDataAdapter(cmd);
                     DataTable temp = new DataTable();
@@ -229,7 +237,7 @@ namespace OrdersPage
             
             // not great, better than nothing
             string[] parts = trusted.Split(new char[] {'(',')','[',']',';','*'} );
-            trusted = string.Concat(parts).Replace("'", "''");
+            //trusted = string.Concat(parts).Replace("'", "''");
 
             return trusted;
         }
@@ -270,7 +278,7 @@ namespace OrdersPage
             // we're not bothering with total because it's a derived column anyway
             // TODO add total as a queriable derived column, databse changes never end
 
-            SqlConnection connection = new SqlConnection(GetConnectionString());
+            SqlConnection connection = new SqlConnection("Data Source=PRIS;Initial Catalog=SwiftServe;Integrated Security=True");
 
             // insert order first
             string sqlStatement = "INSERT INTO Orders (CentennialEmail, CreationTime, DelayTime, Status, SemiTotal, Taxes, ServiceCharge) VALUES ('"

@@ -17,7 +17,7 @@ namespace OrdersPage
             if (!IsPostBack)
             {
                 BindOrderGridView(); // order history
-                BindMenuGridView("Cafe"); // placing orders
+                BindMenuGridView("Main Cafeteria"); // placing orders
             }
         }
 
@@ -33,7 +33,7 @@ namespace OrdersPage
         private void BindMenuGridView(string restaurant)
         {
             DataTable dt = new DataTable();
-            SqlConnection connection = new SqlConnection(GetConnectionString());
+            SqlConnection connection = new SqlConnection("Data Source=PRIS;Initial Catalog=SwiftServe;Integrated Security=True");
             try
             {
                 connection.Open();
@@ -66,12 +66,12 @@ namespace OrdersPage
         private void BindOrderGridView()
         {
             DataTable dt = new DataTable();
-            SqlConnection connection = new SqlConnection(GetConnectionString());
+            SqlConnection connection = new SqlConnection("Data Source=PRIS;Initial Catalog=SwiftServe;Integrated Security=True");
             try
             {
                 connection.Open();
                 string sqlStatement = "SELECT Orders.OrderID, RestaurantName, MIN(CreationTime) AS CreationTime, "
-                    + "MIN(Semitotal) AS Subtotal, Min(Taxes) AS Tax, MIN(ServiceCharge) AS ServiceFee, MIN(Semitotal + Taxes + ServiceCharge) AS Total, MIN(Orders.Status) AS Status "
+                    + "MIN(Semitotal) AS Subtotal, Min(Taxes) AS Tax, MIN(ServiceCharge) AS ServiceFee, MIN(Total) AS Total, MIN(Orders.Status) AS Status "
                     + "FROM Orders, Order_Items, Menu_Items WHERE Orders.CentennialEmail = '" + Session["username"]
                     + "' AND Orders.OrderID = Order_Items.OrderID AND Order_Items.Menu_Item_Name = Menu_Items.Name GROUP BY Orders.OrderID, Menu_Items.RestaurantName";
                 SqlCommand cmd = new SqlCommand(sqlStatement, connection);
@@ -104,7 +104,7 @@ namespace OrdersPage
             int orderID = Convert.ToInt32(OrderGridView.SelectedRow.Cells[0].Text);
 
             DataTable dt = new DataTable();
-            SqlConnection connection = new SqlConnection(GetConnectionString());
+            SqlConnection connection = new SqlConnection("Data Source=PRIS;Initial Catalog=SwiftServe;Integrated Security=True");
             try
             {
                 connection.Open();
@@ -143,6 +143,7 @@ namespace OrdersPage
         // this updates the restaurant selection
         protected void RadioButton_CheckedChanged(object sender, EventArgs e)
         {
+            Response.Write("in RadioButton_CheckedChanged");
             string restaurant;
 
             if (RB_EpicBurger.Checked == true)
@@ -159,7 +160,7 @@ namespace OrdersPage
             }
             else if (RB_Poutinerie.Checked == true)
             {
-                restaurant = "Smoke's Poutinerie";
+                restaurant = "Smoke''s Poutinerie";
             }
             else if (RB_Subway.Checked == true)
             {
@@ -167,7 +168,7 @@ namespace OrdersPage
             }
             else if (RB_Timmies.Checked == true)
             {
-                restaurant = "Tim Horton's";
+                restaurant = "Tim Horton''s";
             }
             else
             {

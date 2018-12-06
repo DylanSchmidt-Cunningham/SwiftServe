@@ -183,6 +183,7 @@ CREATE TABLE [dbo].[Orders](
 	[Semitotal] [smallmoney] NOT NULL,
 	[Taxes] [smallmoney] NOT NULL,
 	[ServiceCharge] [smallmoney] NOT NULL,
+	[Total] AS [Semitotal] + [Taxes] + [ServiceCharge],
  CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED 
 (
 	[OrderID] ASC
@@ -298,7 +299,7 @@ ALTER TABLE [dbo].[Restaurant]  WITH CHECK ADD  CONSTRAINT [CK_Rest_PhoneNo] CHE
 GO
 ALTER TABLE [dbo].[Restaurant] CHECK CONSTRAINT [CK_Rest_PhoneNo]
 GO
-ALTER TABLE [dbo].[Restaurant]  WITH CHECK ADD  CONSTRAINT [CK_Rest_Website] CHECK  (([Website] like '%.%.com%' OR [Website] like '%.%.ca%'))
+ALTER TABLE [dbo].[Restaurant]  WITH CHECK ADD  CONSTRAINT [CK_Rest_Website] CHECK  (([Website] like '%.com%' OR [Website] like '%.ca%'))
 GO
 ALTER TABLE [dbo].[Restaurant] CHECK CONSTRAINT [CK_Rest_Website]
 GO
