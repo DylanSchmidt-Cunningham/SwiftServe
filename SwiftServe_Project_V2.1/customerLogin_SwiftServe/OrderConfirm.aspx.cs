@@ -37,10 +37,10 @@ namespace OrdersPage
 
             // build foodTable's columns
 
-            // Menu_Item_Name column
+            // MenuItemName column
             col = new DataColumn();
             col.DataType = Type.GetType("System.String");
-            col.ColumnName = "Menu_Item_Name";
+            col.ColumnName = "MenuItemName";
             col.Caption = "Name";
             col.ReadOnly = true;
             col.Unique = true;
@@ -306,8 +306,8 @@ namespace OrdersPage
                     string qty = row.Cells[2].Text;
 
                     // insert item in table
-                    sqlStatement = "INSERT INTO Order_Items (Menu_Item_Name, OrderID, Price, Quantity) VALUES ('"
-                        + food + "', " + orderId + ", " + price + ", " + qty + ")";
+                    sqlStatement = "INSERT INTO Order_Items (MenuItemName, RestaurantName, OrderID, Price, Quantity) VALUES ('"
+                        + food + "', '" + restaurant + "', " + orderId + ", " + price + ", " + qty + ")";
                     cmd = new SqlCommand(sqlStatement, connection);
                     cmd.ExecuteNonQuery();
                 }

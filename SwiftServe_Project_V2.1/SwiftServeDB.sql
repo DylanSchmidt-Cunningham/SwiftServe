@@ -5,11 +5,11 @@ CREATE DATABASE [SwiftServe]
  CONTAINMENT = NONE
  ON  PRIMARY 
  /* Uncomment the address string that works for your environment: lab computers are ..\MSSQL13.MSSQLSERVER2016\.., Dylan's computer is just ..\MSSQL13.MSSQLSERVER\.. */
-/*( NAME = N'SwiftServe', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\DATA\SwiftServe.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )*/
-( NAME = N'SwiftServe', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER2016\MSSQL\DATA\SwiftServe.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+( NAME = N'SwiftServe', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\DATA\SwiftServe.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+/*( NAME = N'SwiftServe', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER2016\MSSQL\DATA\SwiftServe.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )*/
  LOG ON 
-/*( NAME = N'SwiftServe_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\DATA\SwiftServe_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )*/
-( NAME = N'SwiftServe_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER2016\MSSQL\DATA\SwiftServe_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+( NAME = N'SwiftServe_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\DATA\SwiftServe_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+/*( NAME = N'SwiftServe_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER2016\MSSQL\DATA\SwiftServe_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )*/
 GO
 ALTER DATABASE [SwiftServe] SET COMPATIBILITY_LEVEL = 130
 GO
@@ -141,7 +141,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[Menu_Images](
 	[Name] [varchar](50) NOT NULL,
-	[MenuItem] [varchar](50) NOT NULL,
+	[MenuItemName] [varchar](50) NOT NULL,
+	[RestaurantName] [varchar](50) NOT NULL,
 	[Image] [image] NOT NULL,
 	[IsEnabled] [bit] NOT NULL,
  CONSTRAINT [PK_Menu_Images] PRIMARY KEY CLUSTERED 
@@ -164,7 +165,8 @@ CREATE TABLE [dbo].[Menu_Items](
 	[Visible] [bit] NOT NULL,
  CONSTRAINT [PK_Menu_Items] PRIMARY KEY CLUSTERED 
 (
-	[Name] ASC
+	[Name] ASC,
+	[RestaurantName] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
@@ -197,14 +199,15 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[Order_Items](
-	[Menu_Item_Name] [varchar](50) NOT NULL,
 	[OrderID] [int] NOT NULL,
+	[MenuItemName] [varchar](50) NOT NULL,
+	[RestaurantName] [varchar](50) NOT NULL,
 	[Price] [smallmoney] NOT NULL,
 	[Quantity] [int] NOT NULL,
-	[Subtotal] AS [Quantity] * [Price],
+	[Subtotal]  AS ([Quantity]*[Price]),
  CONSTRAINT [PK_Order_Items] PRIMARY KEY CLUSTERED 
 (
-	[Menu_Item_Name] ASC,
+	[MenuItemName] ASC,
 	[OrderID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
@@ -227,15 +230,15 @@ CREATE TABLE [dbo].[Restaurant](
 ) ON [PRIMARY]
 
 GO
-ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_DelayTime]  DEFAULT ((0)) FOR [DelayTime]
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_DelayTime]  DEFAULT ((20)) FOR [DelayTime]
 GO
 ALTER TABLE [dbo].[CustomerAccount]  WITH CHECK ADD  CONSTRAINT [FK_customerLogin_customerAccount] FOREIGN KEY([CentennialEmail])
 REFERENCES [dbo].[CustomerLogin] ([Username])
 GO
 ALTER TABLE [dbo].[CustomerAccount] CHECK CONSTRAINT [FK_customerLogin_customerAccount]
 GO
-ALTER TABLE [dbo].[Menu_Images]  WITH CHECK ADD  CONSTRAINT [FK_Menu_Images_Menu_Items] FOREIGN KEY([MenuItem])
-REFERENCES [dbo].[Menu_Items] ([Name])
+ALTER TABLE [dbo].[Menu_Images]  WITH CHECK ADD  CONSTRAINT [FK_Menu_Images_Menu_Items] FOREIGN KEY([MenuItemName], [RestaurantName])
+REFERENCES [dbo].[Menu_Items] ([Name], [RestaurantName])
 GO
 ALTER TABLE [dbo].[Menu_Images] CHECK CONSTRAINT [FK_Menu_Images_Menu_Items]
 GO
@@ -249,8 +252,8 @@ REFERENCES [dbo].[CustomerAccount] ([CentennialEmail])
 GO
 ALTER TABLE [dbo].[Orders] CHECK CONSTRAINT [FK_Orders_CustomerAccount]
 GO
-ALTER TABLE [dbo].[Order_Items]  WITH CHECK ADD  CONSTRAINT [FK_Order_Items_Menu_Items] FOREIGN KEY([Menu_Item_Name])
-REFERENCES [dbo].[Menu_Items] ([Name])
+ALTER TABLE [dbo].[Order_Items]  WITH CHECK ADD  CONSTRAINT [FK_Order_Items_Menu_Items] FOREIGN KEY([MenuItemName], [RestaurantName])
+REFERENCES [dbo].[Menu_Items] ([Name], [RestaurantName])
 GO
 ALTER TABLE [dbo].[Order_Items] CHECK CONSTRAINT [FK_Order_Items_Menu_Items]
 GO
@@ -299,10 +302,6 @@ ALTER TABLE [dbo].[Restaurant]  WITH CHECK ADD  CONSTRAINT [CK_Rest_PhoneNo] CHE
 GO
 ALTER TABLE [dbo].[Restaurant] CHECK CONSTRAINT [CK_Rest_PhoneNo]
 GO
-ALTER TABLE [dbo].[Restaurant]  WITH CHECK ADD  CONSTRAINT [CK_Rest_Website] CHECK  (([Website] like '%.com%' OR [Website] like '%.ca%'))
-GO
-ALTER TABLE [dbo].[Restaurant] CHECK CONSTRAINT [CK_Rest_Website]
-GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Price cannot be negative' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Menu_Items', @level2type=N'CONSTRAINT',@level2name=N'CK_Menu_Items_Price_GTE_Zero'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Price cannot be negative' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Order_Items', @level2type=N'CONSTRAINT',@level2name=N'CK_Order_Items_Price_GTE_Zero'
@@ -322,8 +321,6 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Status must be ''New'', ''In Progress'', or ''Complete''' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'CONSTRAINT',@level2name=N'CK_Orders_Status_Options'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'check the format of the restaurant''s phone number' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Restaurant', @level2type=N'CONSTRAINT',@level2name=N'CK_Rest_PhoneNo'
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'check the format of the restaurant''s website' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Restaurant', @level2type=N'CONSTRAINT',@level2name=N'CK_Rest_Website'
 GO
 USE [master]
 GO

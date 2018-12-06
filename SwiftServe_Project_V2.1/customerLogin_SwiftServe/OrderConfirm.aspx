@@ -124,7 +124,7 @@
             <br />
             <asp:GridView ID="OrderItemsView" runat="server" AutoGenerateRows="false">
                 <Columns>
-                    <asp:BoundField DataField="Menu_Item_Name" HeaderText="Name" HeaderStyle-Font-Bold="true" />
+                    <asp:BoundField DataField="MenuItemName" HeaderText="Name" HeaderStyle-Font-Bold="true" />
                     <asp:BoundField DataField="Price" HeaderText="Price" HeaderStyle-Font-Bold="true" />
                     <asp:BoundField DataField="Quantity" HeaderText="Quantity" HeaderStyle-Font-Bold="true" />
                     <asp:BoundField DataField="Subtotal" HeaderText="Subtotal" HeaderStyle-Font-Bold="true" />

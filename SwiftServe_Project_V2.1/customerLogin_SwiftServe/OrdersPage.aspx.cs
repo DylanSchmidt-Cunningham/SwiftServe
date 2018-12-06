@@ -70,10 +70,10 @@ namespace OrdersPage
             try
             {
                 connection.Open();
-                string sqlStatement = "SELECT Orders.OrderID, RestaurantName, MIN(CreationTime) AS CreationTime, "
+                string sqlStatement = "SELECT Orders.OrderID, Min(RestaurantName) AS RestaurantName, MIN(CreationTime) AS CreationTime, "
                     + "MIN(Semitotal) AS Subtotal, Min(Taxes) AS Tax, MIN(ServiceCharge) AS ServiceFee, MIN(Total) AS Total, MIN(Orders.Status) AS Status "
-                    + "FROM Orders, Order_Items, Menu_Items WHERE Orders.CentennialEmail = '" + Session["username"]
-                    + "' AND Orders.OrderID = Order_Items.OrderID AND Order_Items.Menu_Item_Name = Menu_Items.Name GROUP BY Orders.OrderID, Menu_Items.RestaurantName";
+                    + "FROM Orders, Order_Items WHERE Orders.CentennialEmail = '" + Session["username"]
+                    + "' AND Orders.OrderID = Order_Items.OrderID GROUP BY Orders.OrderID";
                 SqlCommand cmd = new SqlCommand(sqlStatement, connection);
                 SqlDataAdapter sqlData = new SqlDataAdapter(cmd);
 
@@ -84,7 +84,7 @@ namespace OrdersPage
                     OrderGridView.DataBind();
                 }
             }
-            catch (System.Data.SqlClient.SqlException ex)
+            catch (SqlException ex)
             {
                 string msg = "Fetch Error: ";
                 msg += ex.Message;
@@ -108,7 +108,7 @@ namespace OrdersPage
             try
             {
                 connection.Open();
-                string sqlStatement = "SELECT Menu_Item_Name, Quantity, Price, Subtotal FROM Order_Items WHERE OrderID = "
+                string sqlStatement = "SELECT MenuItemName, Quantity, Price, Subtotal FROM Order_Items WHERE OrderID = "
                     + orderID + ")";
                 SqlCommand cmd = new SqlCommand(sqlStatement, connection);
                 SqlDataAdapter sqlData = new SqlDataAdapter(cmd);
